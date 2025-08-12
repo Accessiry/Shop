@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/shop/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shop/src/main/java/com/dhee/service/impl/CategoryServicelmpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shop/src/main/java/com/dhee/service/impl/UserServiceImp.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shop/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shop/src/main/webapp/jsp/index/js/index/myCart.js" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

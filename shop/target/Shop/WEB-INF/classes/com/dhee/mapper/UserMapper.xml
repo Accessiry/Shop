@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhee.mapper.UserMapper">
+    <insert id="userReg">
+        INSERT INTO MEMBER(ID,USERNAME,PASSWORD,NAME,IDENTITY,TEL,EMAIL,BALANCE,STATE)
+        VALUES (null,#{username},#{password},null,null,null,#{email},null,0)
+
+    </insert>
+    <select id="getUsername" resultType="Member">
+        SELECT *
+        FROM MEMBER
+        WHERE USERNAME=#{username}
+    </select>
+
+    <!--用户登录查询-->
+    <select id="userLogin" resultType="Member">
+        SELECT *
+        FROM MEMBER
+        WHERE USERNAME=#{username} AND PASSWORD=#{password}
+    </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhee.mapper.AdminProMapper">
+
+    <resultMap id="ProductResult" type="Product">
+        <id column="id" property="id"/>
+        <id column="name" property="name"/>
+        <id column="type" property="type"/>
+        <id column="color" property="color"/>
+        <id column="price" property="price"/>
+        <id column="state" property="state"/>
+        <id column="number" property="number"/>
+        <id column="img" property="img"/>
+        <id column="imgPath" property="imgPath"/>
+        <id column="cid" property="cid"/>
+
+        <association property="category" javaType="Category">
+            <id column="id" property="id"/>
+            <id column="cname" property="name"/>
+
+        </association>
+    </resultMap>
+    <!--根据用户id查询购物车 -->
+    <select id="searchPro" resultMap="ProductResult">
+        SELECT PRODUCT.ID,PRODUCT.NAME,TYPE,COLOR,PRICE,NUMBER,IMG,IMGPATH,CATEGORY.NAME CNAME
+        FROM PRODUCT,CATEGORY
+        WHERE PRODUCT.cid=CATEGORY.id
+    </select>
+
+    <select id="sPro" resultMap ="ProductResult">
+        SELECT *
+        FROM PRODUCT
+        <where>
+            <if test="id!=null and id!=''">
+                AND NAME LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertPro">
+        INSERT INTO PRODUCT
+        (ID,NAME,TYPE,COLOR,PRICE,STATE,NUMBER,IMG,IMGPATH,CID)
+        VALUES (#{id},#{name},#{type},#{color},#{price},#{state},#{number},#{img},#{imgPath},#{cid})
+    </insert>
+
+</mapper>
+

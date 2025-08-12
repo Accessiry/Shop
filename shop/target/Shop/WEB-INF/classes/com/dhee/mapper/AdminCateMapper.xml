@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhee.mapper.AdminCateMapper">
+
+    <!--管理员商品类别查询-->
+    <resultMap id="CateResult" type="Category">
+        <id column="id" property="id"/>
+        <id column="name" property="name"/>
+<!--        <id column="state" property="state"/>-->
+    </resultMap>
+    <select id="searchCate" resultMap ="CateResult">
+        SELECT ID,NAME
+        FROM CATEGORY
+    </select>
+
+    <select id="sCate" resultMap ="CateResult">
+        SELECT ID,NAME
+        FROM CATEGORY
+        <where>
+            <if test="id!=null and id!=''">
+                AND NAME LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

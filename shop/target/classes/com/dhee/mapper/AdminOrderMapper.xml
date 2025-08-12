@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhee.mapper.AdminOrderMapper">
+
+    <!--管理员商品类别查询-->
+    <resultMap id="OrderResult" type="MyOrder">
+        <id column="id" property="id"/>
+        <id column="time" property="time"/>
+        <id column="state" property="state"/>
+        <id column="mid" property="mid"/>
+<!--        <id column="state" property="state"/>-->
+    </resultMap>
+    <select id="searchOrder" resultMap ="OrderResult">
+        SELECT *
+        FROM MYORDER
+    </select>
+
+    <select id="sOrder" resultMap ="OrderResult">
+        SELECT *
+        FROM MYORDER
+        <where>
+            <if test="id!=null and id!=''">
+                AND MID LIKE CONCAT('%',#{id},'%')
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

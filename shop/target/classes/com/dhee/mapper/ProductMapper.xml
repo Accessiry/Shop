@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhee.mapper.ProductMapper">
+
+    <resultMap id="ProductResult" type="Product">
+        <id column="id" property="id"/>
+        <id column="name" property="name"/>
+        <id column="type" property="type"/>
+        <id column="color" property="color"/>
+        <id column="price" property="price"/>
+        <id column="state" property="state"/>
+        <id column="number" property="number"/>
+        <id column="img" property="img"/>
+        <id column="imgPath" property="imgPath"/>
+        <id column="cid" property="cid"/>
+    </resultMap>
+    <select id="selByCid" resultMap="ProductResult">
+        SELECT *
+        FROM Product
+        <where>
+            <if test="cid!=null">
+                AND CID=#{cid}
+            </if>
+            <if test="name!=null and name!=''">
+                AND NAME LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+    <!--商品详情-->
+    <select id="productDetail" resultMap="ProductResult">
+        SELECT *
+        FROM Product
+        WHERE ID=#{id}
+    </select>
+
+    <!--更新商品库存-->
+    <update id="updateProductNum">
+        UPDATE PRODUCT
+        SET NUMBER=NUMBER-#{number}
+        WHERE ID=#{id}
+    </update>
+
+    <!--加入购物车-->
+    <insert id="addCart">
+        INSERT INTO BUYCAR
+            (PID,NUM,MID)
+        VALUES (#{pid},#{num},#{mid})
+    </insert>
+
+    <!--查询购物车根据mid和pid -->
+    <select id="selCartByPidAndCid" resultMap="ProductResult">
+        SELECT *
+        FROM BUYCAR
+        WHERE PID=#{pid} AND MID=#{mid}
+    </select>
+
+    <!--更新购物车商品数量-->
+    <update id="updateCart">
+        UPDATE BUYCAR
+        SET NUM=NUM+#{num}
+        WHERE PID=#{pid} AND MID=#{mid}
+    </update>
+
+    <resultMap id="BuyCarResult" type="BuyCar">
+        <id column="bid" property="id"/>
+        <id column="pid" property="pid"/>
+        <id column="num" property="num"/>
+        <id column="mid" property="mid"/>
+        <association property="product" javaType="Product">
+            <id column="id" property="id"/>
+            <id column="name" property="name"/>
+            <id column="type" property="type"/>
+            <id column="color" property="color"/>
+            <id column="price" property="price"/>
+            <id column="state" property="state"/>
+            <id column="number" property="number"/>
+            <id column="img" property="img"/>
+            <id column="imgPath" property="imgPath"/>
+            <id column="cid" property="cid"/>
+        </association>
+    </resultMap>
+    <!--根据用户id查询购物车 -->
+    <select id="selCarAndProduct" resultMap="BuyCarResult">
+        SELECT NAME,TYPE,COLOR,PRICE,NUMBER,IMG,IMGPATH,BUYCAR.ID BID,PID,NUM,MID
+        FROM PRODUCT,BUYCAR
+        WHERE PRODUCT.id=BUYCAR.pid AND BUYCAR.MID=#{mid}
+    </select>
+
+    <!--删除购物车记录-->
+    <delete id="delMyCart">
+        DELETE FROM BUYCAR
+        WHERE ID=#{id}
+    </delete>
+
+    <!--清空购物车记录-->
+    <delete id="clearMyCart">
+        DELETE FROM BUYCAR
+        WHERE MID=#{mid}
+    </delete>
+
+    <!--添加订单-->
+    <insert id="addMyOrder">
+    <selectKey keyProperty="id" resultType="int" order="AFTER">
+        SELECT LAST_INSERT_ID()
+    </selectKey>
+        INSERT INTO MYORDER
+        (TIME,STATE,MID,ADDRESS)
+        VALUES (#{time,jdbcType=TIMESTAMP},#{state},#{mid},#{address})
+    </insert>
+
+    <!--添加订单详情-->
+    <insert id="addOrderDetail">
+        INSERT INTO ORDERDETAIL
+        (PID,OID,NUM)
+        VALUES (#{pid},#{oid},#{num})
+    </insert>
+
+    <resultMap id="selMyOrderResult" type="MyOrder">
+        <id column="id" property="id"/>
+        <id column="time" property="time"/>
+        <id column="state" property="state"/>
+        <id column="mid" property="mid"/>
+        <id column="address" property="address"/>
+    </resultMap>
+    <!--查询我的订单-->
+    <select id="selMyOrder" resultMap="selMyOrderResult">
+        SELECT *
+        FROM MYORDER
+        WHERE MID=#{mid}
+    </select>
+
+    <!--更新订单状态-->
+    <update id="updateMyOrderState">
+        UPDATE MYORDER
+        SET STATE=#{state}
+        WHERE ID=#{id}
+    </update>
+
+
+    <resultMap id="orderDetail" type="OrderDetail">
+        <id column="o_id" property="id"/>
+        <id column="pid" property="pid"/>
+        <id column="num" property="num"/>
+        <id column="oid" property="oid"/>
+        <association property="product" javaType="Product">
+            <id column="p_id" property="id"/>
+            <id column="name" property="name"/>
+            <id column="type" property="type"/>
+            <id column="color" property="color"/>
+            <id column="price" property="price"/>
+            <id column="state" property="state"/>
+            <id column="number" property="number"/>
+            <id column="img" property="img"/>
+            <id column="imgPath" property="imgPath"/>
+            <id column="cid" property="cid"/>
+        </association>
+    </resultMap>
+    <!--查询订单详情-->
+    <select id="selOrderDetail" resultMap="orderDetail">
+        SELECT NAME,COLOR,TYPE,PRICE,IMG,IMGPATH,NUM,PRODUCT.ID P_ID,ORDERDETAIL.ID O_ID
+        FROM ORDERDETAIL,PRODUCT
+        WHERE ORDERDETAIL.OID=#{oid} AND ORDERDETAIL.PID=PRODUCT.ID
+    </select>
+
+    <select id="selIndexDigital" resultMap="ProductResult">
+        SELECT * FROM PRODUCT
+        WHERE ID IN(
+            SELECT PID FROM (
+                SELECT PID FROM ORDERDETAIL,PRODUCT
+                           WHERE CID=9 AND ORDERDETAIL.PID=PRODUCT.ID
+                           GROUP BY PID
+                           ORDER BY SUM(NUM) DESC
+                           LIMIT 0,6
+                            )P
+            )
+    </select>
+
+</mapper>
